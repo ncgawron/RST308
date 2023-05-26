@@ -1,0 +1,122 @@
+---
+title: "ncgawron_homework4"
+author: "Nicholas Gawron, collab: Jamie Loring"
+date: "3/30/2021"
+output: 
+  html_document:
+    code_folding: show
+---
+
+Here we set up our global options. Note that `fig_width` and hieght are included in the global options.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,fig_width=7 , fig_hieght= 5)
+library(ggplot2)
+library(tidyverse)
+# together with setup options
+```
+
+
+
+## Graphs of Bank data
+
+0. Read in data with the tidyverse. `bank` is a tibble and the head is shown. 
+```{r  echo = FALSE}
+bank<- read_delim("bankData.txt",delim = ";")
+# reading in file from project directory
+head(bank)
+```
+
+## Plots in Base R
+
+1. An attempt at a histogram.  This uses the `hist` command and plots our numeric variable of age. We add our kernel line through the `lines` command by passing the `density()` function inside of it. This plots a count of all of the ages of members in our data set. We can observe that our data has a mean age given of around 40.
+
+```{r}
+hist(bank$age, main = "Histogram of Ages in the Dataset with Smoothed Den", xlab = "Age", , col = "green",freq = FALSE)
+lines(density(bank$age),lwd =2)
+abline(v=mean(bank$age),lwd =2, lty =1)
+text(x=mean(bank$age), y =0.038, labels = "Mean Age",cex=1.5)
+#places text "mean age" at the x value of the mean and around the height of 0.04
+```
+
+
+2. Duration Scatter Plot. Here we create a scatter plot in which a persons age is the independent variable on the x-axis and our numeric variable duration is the dependent variable on the y-axis. We group by the variable marital status.  We can observe a somewhat obvious trend in our data - that younger people tend to be single. This is evident by the fact we see a lot of green on the left where the ages are a lot lower. 
+```{r}
+
+plot(x= bank$age,y=bank$duration, main = "Scatterplot of Age by Duration", pch = 3,xlab = "Age", ylab="Duration", col= c("black","red","green","blue")[as.factor(bank$marital)]) # groups color by a factor of marital, as .factor makes marriage a factor variable
+
+legend("topright", legend = c("Divorced", "Married","Single","Unknown"), pch = 3,col = c("black","red","green","blue"))
+```
+
+3. Barplot of Martial Status and Poutcome. Here our x-axis considers the counts of the variable `Poutcome`. This variable measures  outcome of the previous marketing campaign per data point (categorical: 'failure','nonexistent','success'). We then block off and color side by side bars by our martial status variable. We notice that most successful campaigns come from data points that are married. 
+
+```{r}
+tab1<- table(bank$marital,bank$poutcome)
+barplot(tab1, main = "Barplot of Martial Status and Poutcome",beside = TRUE,legend =TRUE, args.legend = list(title = "Marital Status", cex = 1.4))
+# increases legend size
+```
+
+
+4. We now create a horizatonal boxplot. We will use the same code as the previous question, but must add the `horiz = TRUE` option into our barplot statement. We are still measuring the counts of the poutcome variable and blocking under marital status. We also note that a nonexistent campaign outcome is the greatest count across all **known** marital statuses.
+
+```{r}
+barplot(tab1, main = "Barplot of Martial Status and Poutcome",horiz=TRUE, legend =TRUE, args.legend = list(title = "Marital Status", cex = .75))
+# agrs legend creates a legend titled and shrunk by 3/4 factor
+# horiz = true flips axis 
+```
+
+5. This is a box plot of our duration variable (last contact duration in seconds) across our factor of month. We can observe that median call time was relatively low and hovering around 150. We can observe that the greatest duration outlier occurs in the month of November at about 5,000. It seem as if we could safely assume that a call would not go longer than 1000 seconds.
+```{r}
+newMth<-factor(bank$month,levels = c("mar","apr","may","jun","jul","aug","sep","oct","nov","dec"))
+#reorders the months as a new factor in time order
+
+boxplot(bank$duration~newMth, xlab="Month", ylab="Duration of Campaign" )
+```
+
+
+## Plots if GGplot2 
+
+1. Here was have a histogram of the ages of all members in our dataset. This creates a count of the all ages of members in our data sets. We also plot our density curve, which has an area of 1. We can observe a right skew in our data that is quite representative of the real world population. This is because we would have a lot less people over the ages of say 90 than under the age of 50.  
+```{r}
+q1 <- ggplot(data = bank, aes(x = age))
+
+q1+geom_histogram(aes(y=..density..,x = age), colour = "black",fill ="green", size = 1, binwidth = 2.5)+geom_density(aes(x=age),kernel = "gaussian")+labs(x ="Age of Person", y="Density",title="Histogram of Ages in the Dataset with Smoothed Density")
+# gaussian kernel created
+```
+
+
+2. Plotting Scatter of Divorce. Here we have a scatterplot that shows the duration of the account as our y variable across age as the x variable. We group by a third variable called marital - which represents the marital status of the data point. We see that the ages that correspond to the greatest duration of a call is about 40. We also see as people get older - past 40- call duration seems to tend downward. 
+```{r}
+sc<- ggplot(data = bank, aes(x =age, y= duration))
+scMarried <- sc+geom_point(pch=4,aes(col=marital))+labs(x="Age", y= "Duration",title="Scatterplot of Age by Duration")
+scMarried # stores general plot as scMarried
+#geom_point creates scatter plot and groups by martial variable
+```
+
+
+3. We consider the same plot above. We are plotting the ages of persons on the  x axis, and the duration of the campiagn on the y axis. We then group by tow different variables like martical status and campaign outcome. In general successful calls seemed to have overall smaller / shorter duration of campaign length.  
+```{r}
+scMarried+facet_wrap(~poutcome)+labs(title="Scatterplot of Age by Duration \n
+ for each value of poutcome")# groups by our variable poutcome
+```
+
+4. Barplot of Martial Status and Poutcome. Here we use `ggplot()` to create a graphing instance and a bar plot that measures the count of data points that had a certain marital status. We then group these counts by the variable of campoagn outcome `poutcome`. We notice that married members in our data set had greater raw success by count.
+
+```{r}
+BarGG<- ggplot(data=bank, aes(x=marital, fill =poutcome)) #creates x variable 
+BarrGGvert<-BarGG+geom_bar(position = "dodge")+labs(title="Barplot of Martial Status and Poutcome")
+BarrGGvert
+```
+
+5. This creates a flipped barchart. In question 4, we store our vertical bar chart, along with the ggplot instance as `BarrGGvert`. By using this instance, we thne have the complete figure stored in one term. We then add a simple layer, `coord_flip()` to this variable. This results in a transpose of our axis and plotting. We notice that across all forms of martial status - success was the least likely outcome for a data point.
+
+```{r}
+BarrGGvert+coord_flip()# flips axis
+```
+
+6. Here we create a similar boxplot to our base R plots. Our x axis variable is the factor of months in the year, and our dependent variable is the duration of the marketing campaign call in seconds. We notice that december seems to have the greatest median duration of campaign value in comparsion to all other plots per month. Data is the most consise (has least outliers) in the month of march.
+```{r}
+BoxGG<- ggplot(data=bank,aes(x=month, y =duration)) #makes ggplot isntance
+BoxGG + geom_boxplot(fill="white")+labs(y="Duration of Capmaign",x="Month") # labels
+```
+
+

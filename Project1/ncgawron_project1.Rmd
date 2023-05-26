@@ -1,0 +1,188 @@
+---
+date: "March 1 2021"
+output:
+  html_document:
+    code_folding: hide
+---
+
+# ST 308 Project 1{.tabset}
+
+
+```{r global-options, include=FALSE, tidy=TRUE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+library(readxl)
+library(tidyverse)
+```
+
+## Tab 1: Simulating Data & Performance
+
+### Introduction
+
+In statistics, we often create **confidence intervals** that attempt to capture a true value from a population.
+
+#### **Population**
+For instance, we might be interested in the *mean time* to complete an assignment for **all** students that could take ST 308. This value is not something we can actually find because there are many students that can eventually take ST 308.
+
+#### **Sample** 
+
+Instead, we collect a sample of students from ST 308 (say `n = 40` of them) and measure their time
+to complete an assignment. We try to use this sample data and often the **sample** mean in order to estimate
+the population mean.
+A common 95% confidence interval used to capture a mean is
+
+$$\bar{y} \pm 1.96 s/\sqrt{n} $$
+where $\bar{y}$ is the sample mean (`mean()` in R), $s$ is the sample standard deviation (`sd()` in R), and $n$ is the sample size.
+
+### Data Generation and Storage
+
+1. We will be setting a seed to keep consistent random values through `set.seed()`
+```{r}
+set.seed(2718)
+```
+
+
+
+
+
+2. We will generate a random data set that comes from a gamma distribution. The code below 
+ uses the `rgamma()` function to create a dataset  consisting of 40 random
+values from a gamma distribution with shape parameter 4 and rate parameter 2 saved as RandGamma.
+
+```{r}
+RandGamma <- rgamma(40,4,2)
+```
+
+
+3. Use the hist() function to create a basic histogram of the sample of data (no need to modify it in
+anyway). The histogram should be centered in the outputted document using a code chunk option.
+
+```{r fig.align="center"} 
+hist(RandGamma)
+```
+
+4. We will now utilize our confidence interval formula form our introduction, and note that $n=40$. 
+We will first consider the sample mean or $\bar{x}$ of our random gamma values given by:`mean(RandGamma)` $= \bar{x} =$ `r mu <- round(mean(RandGamma),digits =2); mu`. In addition we will need to compute the sample's standard deviation, which computes to: $s$ =  `sd(RandGamma)` = `r sd <- round(sd(RandGamma),digits = 2);sd`. 
+Observe: $\bar{x}\pm\frac{1.96s}{\sqrt{n}}$ 
+
+We are 95% confident that the true population mean of random values from the gamma distribution is captured by the interval **(`r round(mu - 1.96*sd/sqrt(40), digits = 2)` , `r round(mu + 1.96*sd/sqrt(40), digits = 2)`)**. 
+
+5. This chuck below determines wether the true mean of $2$ is captured by the interval above. This code chuck considers the lower bound and upper bounds of the confidence interval generated in the paragraph above. We then use a logical AND  operator to conjoin two statements. We first determine if the true mean value of $2$ is greater than the lower bound, `r round(mu - 1.96*sd/sqrt(40), digits = 2)`. We then analogously  determine if the true mean value of $2$ is less than the upper bound, `r round(mu + 1.96*sd/sqrt(40), digits = 2)`. 
+If both of these conditions are true, then we know the value $2$ is a value inside the interval on $\mathbb{R}^1$.
+We use an `if()` statement on the logical AND statement. If the logical AND is true, where $2$ is in the interval, the if statement prints to the console: "The interval captures the true mean". 
+If either statement in the AND operator is false, then the whole AND statement is false. This will cause the code on the else command to execute, which prints: "The interval does not capture the true mean.". 
+
+```{r}
+if((mu - 1.96*sd/sqrt(40) < 2 ) & (2< mu+1.96*sd/sqrt(40)))
+{print("The interval captures the true mean")}else
+{print("The interval does not capture the true mean.")}
+```
+
+6. Now we are going to repeat the process of generating a sample, calculating the interval, and checking if
+the true value is in the interval $N = 1000$ times.
+A general note on how this loop is created. 
+-  We will initialize an empty dataframe with N rows and 2 columns (one for the lower
+endpoint and one for the upper endpoint). We will utilize the line `data.frame( LowerBd =numeric(N), UpperBd =numeric(N) )`. This creates a data frame, stored as `GamInt`, with $N$ rows and $2$ columns and all zero entries.
+
+- We now begin to initialize a `for` loop. The interior condition of the loop: `(i in 1:N)` creates an index variable `i` that ranges from integer values 1 to $N$. The code in the curly braces is executed for `i=1` first and automatically updates the condition by adding $1$. 
+- Within each iteration of the loop, the first line in the executable code of the loop, we create a random sample through the `rgamma` function in an analogous manner to the first code block under item 2. 
+- The next line computes the sample's mean, standard deviation and sample size. This is done through `mean(RandGamma)` ,  `sd(RandGamma)` & `length(RandGamma)` respectively.
+- We finally compute the bounds for our intervals using the prescribed formula from our introduction. `mu - 1.96*sd/sqrt(lnRG)` computes the value of the lower bound of our interval given the vector length, sample mean and sample standard deviation. This value is stored in the *i-th* row of the data frame under the Lower Bound Coloumn, denoted by `GamInt$LowerBd[i] <- mu - 1.96*sd/sqrt(lnRG)`.
+- The upper bound is calculated in an analogous fashion. 
+- `head(GamInt)` is used to display the first 6 rows of 1000 in our data frame. 
+
+
+
+
+```{r}
+N <- 1000;
+GamInt <- data.frame( LowerBd =numeric(N), UpperBd =numeric(N) ) # preallocates the dataframe
+for( i in 1:N)
+{
+  RandGamma <- rgamma(40,4,2)  #create data set
+  mu <-  mean(RandGamma) ; sd <- sd(RandGamma) ; lnRG <-length(RandGamma)
+  GamInt$LowerBd[i] <- mu - 1.96*sd/sqrt(lnRG) # stores lower bound in data frame
+  GamInt$UpperBd[i] <- mu + 1.96*sd/sqrt(lnRG) #stores upper bound in dataframe
+}
+head(GamInt)
+
+```
+
+- Now we have the data frame with the lower and upper endpoints
+– We can utilize `mutate()` to create a new column called *contains* that is either a 1 ( which indicates the interval on the *i-th* row captured the true mean of 2) or a 0 (didn’t capture it).
+- The part of the code chunk below: `ifelse( ((LowerBd<2)&(2<UpperBd)),1, 0) )` uses clean vecotrized code which determines if the inequality holds: *Lower Bound* $<2<$ *Upper Bound*. If this inequality holds, $2\in (LWBd,UpBd)$ where *LwBd* and *UpBd* are the lower and upper bound respectively. By the structure of the ifelse statment, a value of $1$ will be returned when this condition is met, and 0 when it is not. These values are stored in the `contains` variable for the *i*-th row / interval.
+
+- We also use the tidyverse piping command `%>%` to create another variable with `mutate`. This variable called `Intlength` is computed by taking the upper bound and subtracting the lower bound. of each interval (upper minus lower endpoint).
+- An additional note, the piping `%>%` allows us to call`GamInt` only once and not have to create new data frames for each variable we creates, shortening computation time. 
+- We can display the first 6 rows thru the `head()` command on our modified dataframe `GamMod`. 
+```{r }
+GamMod <- GamInt %>% mutate(contains = ifelse( ((LowerBd<2)&(2<UpperBd)),1, 0) ) %>% mutate(IntLen = UpperBd-LowerBd);
+# contains var 
+head(GamMod) # displays firs 6 rows of our dataframe
+```
+
+
+
+
+### Results
+
+After we have computed 1000 intervals, `r sum(GamMod$contains)` intervals had captured the true mean of $2$. The aforementioned sum was calculated with the command `sum(GamMod$contains)`.
+We will compute the proportion with the code $\hat{p}=$`sum(GamMod$contains)/length(GamMod$contains)`. Note that code from the previous line is derived from the formula of the mean, in which: $\hat{p} = \frac{\sum_{1}^{n}x_i}{n}$ where $x_i$ is the value of the *contains* variable for the *i*-th row. 
+The proportion of intervals capturing the true mean is $\hat{p}=$ `r sum(GamMod$contains)/length(GamMod$contains)`.
+
+The average length of all 1000 intervals is: `r mean(GamMod$IntLen)`. This value was computed through the command `mean(GamMod$IntLen)`.
+This computes the mean value in the column of the data frame consisting of interval lengths. 
+
+
+
+
+
+
+
+
+
+## Tab 2: Using R for data analysis
+
+
+1. We will work with data about the amounts of precipitation during 227 storms in Illinois from 1960 to 1964 (Le Cam, L., and Neyman, J. (eds.) (1967).These data could reasonably come from a gamma distribution where for positive real parameters $k,\theta$ we have $E(X) = k\theta$ and $Var(X) = k\theta^2$. We will be reading this data into R. Under observation of all data files, we can observe the max rainfall value is 2.13, whereas the minimum is 0.001.
+
+
+
+
+2. Use an R code chunk to read in these files and combine them into one R object with two columns: **Precip** and **Year**. Print out the top section of the dataset (by converting it to a tibble and printing that out).
+  - We use a general `read.table` command to read in each year's rainfall .txt file. 
+  - This value is stored as `Rain6#` corresponding to the year the data was collected. 
+  - The fifth line of code: `YearReped <- c(rep(1960,Len60),rep(1961,Len61),rep(1962,Len62),rep(1963,Len63),rep(1964,Len64))` creates an atomic vector of the years 1960 to 1964 in order, repeated the number of times equal to the number of values collected in each year's text file.
+  - The command `c(Rain60$V1,Rain61$V1,Rain62$V1,Rain63$V1,Rain64$V1)` concatenates all recorded rain values in an atomic vector labeled `RainRawData`. 
+  - The line `RainFrame <- data.frame(Year = YearReped ,Precip = RainRawDat)` creates a data frame with two columns, called **Year** and **Precip**, and is stored as `RainFrame`. 
+  - The function `as_tibble` creates a tibble from a data frame.
+
+```{r }
+Rain60 <- read.table('data/illinois60.txt'); Len60 <-length(Rain60$V1)
+Rain61 <- read.table('data/illinois61.txt'); Len61 <-length(Rain61$V1)
+Rain62 <- read.table('data/illinois62.txt'); Len62 <-length(Rain62$V1)
+Rain63 <- read.table('data/illinois63.txt'); Len63 <-length(Rain63$V1)
+Rain64 <- read.table('data/illinois64.txt'); Len64 <-length(Rain64$V1)
+
+YearReped <- c(rep(1960,Len60),rep(1961,Len61),rep(1962,Len62),rep(1963,Len63),rep(1964,Len64))
+RainRawDat <- c(Rain60$V1,Rain61$V1,Rain62$V1,Rain63$V1,Rain64$V1)
+RainFrame <- data.frame(Year = YearReped ,Precip = RainRawDat)
+
+RainData <-as_tibble(RainFrame); head(RainData)
+```
+We also note the mean of the whole sample is 'r mean(RainRawDat)' given by the R code,`mean(RainRawData)`. The maximum and minimum values of rainfall are verified thru `min(RainRawDat)` and `max(RainRawDat)`. The median amount of precipitation is given by `median(RainRawDat)` = `r median(RainRawDat)`. This data of precipitation is skewed right since the sample median is less than the sample mean. 
+
+3. Treating all the precipitation values as a single random sample (ignoring year), we can use the sample to try and make inference for the mean amount of precipitation for all storms in Illinois. We will be collecting this data through the tibble above and applying our confidence interval formula from Part 1. This will require us to calculate the sample mean $\bar{x}$ and $s$ the sample standard deviation. We also know the sample size $n=227$. Note that `XbarRain<-mean(RainData$Precip)` computes the mean of all rainfall values across all years. The command `SRain <-sd(RainData$Precip)` computes the sample's standard deviation.  The final line ,`LowerB <- XbarRain - (1.96*SRain)/sqrt(n); UpperB <- XbarRain + (1.96*SRain)/sqrt(n);` computes the upper and lower bounds of our interval thru the formula introduced in our first part. 
+
+```{r}
+XbarRain<-mean(RainData$Precip);
+SRain <-sd(RainData$Precip);
+ n <- length(RainData$Precip);
+LowerB <- XbarRain - (1.96*SRain)/sqrt(n); UpperB <- XbarRain + (1.96*SRain)/sqrt(n)
+
+```
+
+The 95% confidence interval for $\mu$, the population mean rainfall in Illinois, is given by (`r LowerB`, `r UpperB`). In other words, we are $95\%$ confident that the true mean $\mu$ of Illinois rainfall is captured by the interval (`r LowerB`, `r UpperB`).
+
+
+
+

@@ -1,0 +1,303 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Gawron\_Homework6},
+  pdfauthor={Nicholas Gawron},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\title{Gawron\_Homework6}
+\author{Nicholas Gawron}
+\date{3/3/2021}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{knitr}\OperatorTok{::}\NormalTok{opts_chunk}\OperatorTok{$}\KeywordTok{set}\NormalTok{(}\DataTypeTok{echo =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\KeywordTok{library}\NormalTok{(readxl)}
+\KeywordTok{library}\NormalTok{(tinytex)}
+\end{Highlighting}
+\end{Shaded}
+
+Corresponding code for a problem's part will be \textbf{ABOVE} the
+solution.
+
+\hypertarget{problems}{%
+\subsection{Problems}\label{problems}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  A marketing research firm estimates the proportion of potential
+  customers preferring a certain brand of lipstick by ``randomly''
+  selecting 100 women who come by their booth in a shopping mall. Of the
+  100 sampled, 65 women stated a preference for brand A.
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\item
+  We would estimate the true proportion of women preferting brand A by
+  calculating the proportion of women in the sample that had prefered
+  the brand
+\item
+\item
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  A school desires to estimate the average score that may be obtained on
+  a reading comprehension exam for students in the sixth grade. The
+  school's students are grouped into three tracks, with the faster
+  learners in track I, the slower learners in track III, and the rest in
+  track II. The school decides to stratify on tracks because this method
+  should reduce the variability in test scores. The sixth grade contains
+  55 students in track I, 80 in track II and 65 in track III. A
+  stratified random sample of 50 students is proportionally allocated
+  and yields simple random samples of \(n_1 = 14\), \(n_2 = 20\) and
+  \(n_3=16\) from tracks I, II and III respectively. The data is
+  contained in the accompanying excel file.
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  We will consider the three groups
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ScoreData <-}\StringTok{ }\NormalTok{(readxl}\OperatorTok{::}\KeywordTok{read_excel}\NormalTok{(}\StringTok{'data/HW6Data.XLS'}\NormalTok{));ScoreData}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 20 x 3
+##    `Track I` TrackII TrackIII
+##        <dbl>   <dbl>    <dbl>
+##  1        80      85       42
+##  2        92      82       32
+##  3        68      48       36
+##  4        85      75       31
+##  5        72      53       65
+##  6        87      73       29
+##  7        85      65       43
+##  8        91      78       19
+##  9        90      49       53
+## 10        81      69       14
+## 11        62      72       61
+## 12        79      81       31
+## 13        61      53       42
+## 14        83      59       30
+## 15        NA      68       39
+## 16        NA      52       32
+## 17        NA      71       NA
+## 18        NA      61       NA
+## 19        NA      59       NA
+## 20        NA      42       NA
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Track1 <-}\StringTok{ }\NormalTok{(}\KeywordTok{na.omit}\NormalTok{(ScoreData}\OperatorTok{$}\StringTok{`}\DataTypeTok{Track I}\StringTok{`}\NormalTok{)); T1L <-}\StringTok{ }\KeywordTok{length}\NormalTok{(Track1)}
+\NormalTok{Track2 <-}\StringTok{  }\NormalTok{(}\KeywordTok{na.omit}\NormalTok{(ScoreData}\OperatorTok{$}\NormalTok{TrackII)); T2L <-}\StringTok{ }\KeywordTok{length}\NormalTok{(Track2)}
+\NormalTok{Track3 <-}\StringTok{  }\NormalTok{(}\KeywordTok{na.omit}\NormalTok{(ScoreData}\OperatorTok{$}\NormalTok{TrackIII)); T3L <-}\StringTok{ }\KeywordTok{length}\NormalTok{(Track3)}
+\NormalTok{N <-}\StringTok{ }\NormalTok{T1L }\OperatorTok{+}\StringTok{ }\NormalTok{T2L }\OperatorTok{+}\StringTok{ }\NormalTok{T3L}
+
+\NormalTok{Yst <-(}\DecValTok{1}\OperatorTok{/}\NormalTok{(N))}\OperatorTok{*}\NormalTok{((T1L}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(Track1))}\OperatorTok{+}\NormalTok{(T2L}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(Track2))}\OperatorTok{+}\NormalTok{(T3L}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(Track3))); Yst}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 60.2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#FPC For each Strata}
+\NormalTok{fpc1 <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{(T1L}\OperatorTok{/}\NormalTok{N))}
+\NormalTok{fpc2 <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{(T2L}\OperatorTok{/}\NormalTok{N))}
+\NormalTok{fpc3 <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{(T3L}\OperatorTok{/}\NormalTok{N))}
+
+\CommentTok{#variance }
+\NormalTok{VYst =}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{/}\NormalTok{(N)}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{*}\NormalTok{(fpc1}\OperatorTok{*}\KeywordTok{sd}\NormalTok{(Track1)}\OperatorTok{^}\DecValTok{2}\OperatorTok{/}\NormalTok{T1L)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  We will now look at cavities.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n <-}\DecValTok{10}\NormalTok{;N<-}\StringTok{ }\DecValTok{400}\NormalTok{;}
+\NormalTok{Cavities <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{ ,}\DecValTok{4}\NormalTok{ ,}\DecValTok{1}\NormalTok{ ,}\DecValTok{0}\NormalTok{ ,}\DecValTok{3}\NormalTok{ ,}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{ ,}\DecValTok{0}\NormalTok{ ,}\DecValTok{3}\NormalTok{ ,}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  We will consider both parts
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Abv <-}\StringTok{  }\KeywordTok{c}\NormalTok{(}\DecValTok{48}\NormalTok{ ,}\FloatTok{48.7}\NormalTok{ ,}\FloatTok{50.1}\NormalTok{ ,}\FloatTok{43.3}\NormalTok{ ,}\FloatTok{47.5}\NormalTok{ ,}\FloatTok{49.4}\NormalTok{ ,}\FloatTok{39.9}\NormalTok{ ,}\DecValTok{52}\NormalTok{ ,}\FloatTok{46.7}\NormalTok{ ,}\FloatTok{50.5}\NormalTok{,}\FloatTok{45.6}\NormalTok{ ,}\FloatTok{49.7}\NormalTok{ ,}\FloatTok{45.3}\NormalTok{ ,}\FloatTok{46.9}\NormalTok{ ,}\FloatTok{48.5}\NormalTok{)}
+\NormalTok{Bel <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{37.8}\NormalTok{, }\DecValTok{45}\NormalTok{, }\FloatTok{44.2}\NormalTok{, }\DecValTok{60}\NormalTok{, }\FloatTok{54.2}\NormalTok{, }\FloatTok{56.4}\NormalTok{, }\FloatTok{59.3}\NormalTok{, }\FloatTok{44.4}\NormalTok{, }\FloatTok{41.8}\NormalTok{, }\FloatTok{52.9}\NormalTok{,}\FloatTok{45.7}\NormalTok{, }\DecValTok{57}\NormalTok{, }\FloatTok{48.1}\NormalTok{, }\FloatTok{58.2}\NormalTok{, }\FloatTok{42.5}\NormalTok{, }\FloatTok{41.1}\NormalTok{)}
+\NormalTok{AllTemp <-}\StringTok{ }\KeywordTok{c}\NormalTok{(Abv,Bel)}
+
+\CommentTok{#part a}
+\NormalTok{meanAll <-}\StringTok{ }\KeywordTok{mean}\NormalTok{(AllTemp ) }\CommentTok{# expected value of All temps }
+\NormalTok{sdA<-}\StringTok{ }\KeywordTok{sd}\NormalTok{(AllTemp)}
+\NormalTok{BdAll<-}\StringTok{ }\DecValTok{2}\OperatorTok{*}\KeywordTok{sqrt}\NormalTok{(sdA}\OperatorTok{^}\DecValTok{2}\OperatorTok{/}\KeywordTok{length}\NormalTok{(AllTemp)); }\CommentTok{# computes the Boundary}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\tightlist
+\item
+  We will ignore the FPC for the simple random sample since the total
+  population is all backyard pools which is trivially larger than 20
+  times our smaple size of \(n=31\). The sample mean for an SRS is given
+  by: 48.4096774. The standard deviation for the sample is calculated to
+  be 5.7234229. The boundary, given by the formula:
+  \(B = 2\sqrt{\frac{s^2}{n}}\) computes to 2.0559142. We are 95\%
+  confident that the true mean backyard pool temperature is captured by
+  the interval: \textbf{(46.3537632,50.4655916)}. Since
+  \(50\in (46.3537632,50.4655916)\), there is not enough evidence to
+  suggest the average pool temperature is different from the recommended
+  \(50\) degrees.
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{  Yst <-}\StringTok{ }\NormalTok{(}\DecValTok{1}\OperatorTok{/}\KeywordTok{length}\NormalTok{(AllTemp)) }\OperatorTok{*}\NormalTok{( (}\KeywordTok{length}\NormalTok{(Abv)}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(Abv)) }\OperatorTok{+}\StringTok{  }\NormalTok{(}\KeywordTok{length}\NormalTok{(Bel)}\OperatorTok{*}\KeywordTok{mean}\NormalTok{(Bel)));}
+\NormalTok{fpcAbv <-}\StringTok{ }\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{length}\NormalTok{(Abv) }\OperatorTok{/}\KeywordTok{length}\NormalTok{(AllTemp) )}
+\NormalTok{fpcBel <-}\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{(}\KeywordTok{length}\NormalTok{(Bel) }\OperatorTok{/}\KeywordTok{length}\NormalTok{(AllTemp) )}
+
+\NormalTok{Var <-}\StringTok{ }\NormalTok{((}\DecValTok{1}\OperatorTok{/}\KeywordTok{length}\NormalTok{(AllTemp))}\OperatorTok{^}\DecValTok{2}\NormalTok{)}\OperatorTok{*}\NormalTok{(}\KeywordTok{length}\NormalTok{(Bel))}\OperatorTok{^}\DecValTok{2}\OperatorTok{*}\NormalTok{fpcBel}\OperatorTok{*}\KeywordTok{sd}\NormalTok{(Bel)}\OperatorTok{^}\DecValTok{2}\OperatorTok{/}\KeywordTok{length}\NormalTok{(Bel)}
+\NormalTok{Bd <-}\StringTok{ }\DecValTok{2}\OperatorTok{*}\KeywordTok{sqrt}\NormalTok{(Var)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi}.}
+\setcounter{enumi}{1}
+\item
+  We will now consider a stratified sample.
+\item
+  Treating the sample as stratified does improve our
+\end{enumerate}
+
+\end{document}

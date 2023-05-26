@@ -1,0 +1,39 @@
+---
+title: "Gawron_Homework11"
+author: "Nicholas Gawron"
+date: "4/17/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question 1 
+
+## Part A 
+
+We consider the formula $k\leq \frac{N}{n}$. Given a population size of 
+
+## Part B
+## Part C
+
+# Question 2
+
+## Part A 
+## Part B
+
+# Question 3
+
+# Question 4
+
+# Question 5
+
+# Question 6
+
+
+## Part A 
+
+## Part B
+
+## Part C

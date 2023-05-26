@@ -1,0 +1,127 @@
+---
+title: "ncgawron_HomeWork5"
+author: "Nicholas Gawron"
+date: "4/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# Homework 5
+
+## Loops
+
+### Question 1 
+
+```{r}
+ord <- 1:26 # sets up loop
+for(i in ord){
+# begins loops 
+  # creates ordinal numbering 
+  ordScale<-scales::ordinal(ord)
+  #makes a sentence w/ paste 0 
+  Sentence<-paste0(letters[i]," is the ",ordScale[i]," letter of the alphabet.")
+print(Sentence) # prints to console
+  }
+  
+```
+
+
+### Question 2 
+
+```{r}
+count<-1 #initalize the count
+while(count<40){ # initializes 
+  #increases the count
+  count<- count +1 
+  ifelse(count%%4==0,next,print(count))
+  #above prints all non multiples of 4 from 1 to 40
+  
+  
+}
+```
+
+
+## Vectorizing function
+
+### Question 3 
+
+```{r}
+mtcars %>% apply(2,FUN = summary, na.rm = TRUE)
+#We apply the function  summary to mtcars data set 
+```
+
+### Question 4
+
+```{r}
+#tapply is done 2 times
+MeanTA<-tapply(iris$Sepal.Length, iris$Species, FUN = (mean))
+StdDevTA<-tapply(iris$Sepal.Length, iris$Species, FUN = (sd))
+print(c(StdDevTA,MeanTA))
+# Using tidyverse cleaning
+MeansGB <-iris %>% group_by(Species)%>% summarise(mean = mean(Sepal.Length),StdDev = sd(Sepal.Length))
+MeansGB
+```
+
+### Question 5 
+```{r}
+irislist <- split(iris$Sepal.Length,iris$Species)
+
+# use the list irislist , we include other options for t.test such as the mu value and inequality for the alternative
+lapply(irislist,FUN = t.test,mu=6 , alternative = "greater")
+```
+
+
+```{r}
+#FizzBuzz is a common programming problem used to practice
+#if statements and division.
+#if the number is divisible by 15, replace it with “FizzBuzz”
+test_vec<-100:150
+ifelse(test_vec%%15==0,"FixBuzz",ifelse(test_vec%%5==0,"Buzz",ifelse(test_vec%%2==0,"Fizz",test_vec)))
+```
+
+## Writing Functions 
+
+### Question 7 / 8 
+
+```{r}
+# 
+convert_cm_to_in<-function(cen, roundVar = TRUE){
+   inc <-cen*(0.393701) # considers rounding factor
+  ifelse(roundVar, return(Inches = round(inc,2)) , return(Inches = (inc)))
+  # if rounding term is not includes - as asuume to round
+  # if false we do not round
+}
+
+#first evaluates 25cm to inches 
+convert_cm_to_in(25)
+
+#evaluate at vector of size 100
+convert_cm_to_in(1:100,roundVar = FALSE)
+
+#Question 8 
+convert_cm_to_in(1:100)
+
+```
+
+### Question 9 
+
+```{r}
+count_my_change <- function(Dol = 0, Qt =0, D= 0, N=0,P=0,...){
+  #going from highest to lowest denomination
+  tot<-Dol+.25*Qt +.1*D+N*.05+.01*P
+  # creates the text to print
+  totAm<-paste0("Your total amount is $",tot,".")
+  return(totAm)
+}
+
+#h 5 dollars, 2 dimes, 3 quarters, 4 pennies, and 1 nickel.
+count_my_change(Dol=5,D=2,Qt = 3,P=4,N=1)
+#no inputs
+count_my_change()
+
+```
+

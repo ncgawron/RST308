@@ -1,0 +1,697 @@
+\documentclass[notes=show]{beamer}
+\setbeamertemplate{footline}[page number]
+\useinnertheme{circles}
+\beamertemplatenavigationsymbolsempty
+\hypersetup{colorlinks=true,linkcolor=blue} 
+\usefonttheme[stillsansseriftext]{serif}
+\usepackage{multicol}
+\usepackage{fancyvrb}
+\newcommand\nm[1]{\left\lVert#1\right\rVert}
+\usetheme{CambridgeUS}
+\setbeamercolor{frametitle}{,bg=brown!50}
+\usepackage{ biblatex }
+
+\newcommand{\BF}[1]{{\bf #1:}\hspace{1em}\ignorespaces}
+\newcommand{\bg}[1]{\mbox{{\boldmath ${#1}$}}}
+
+\newcommand \bit  {\begin{itemize}}
+\newcommand \eit  {\end{itemize}}
+\newcommand \ben  {\begin{enumerate}}
+\newcommand \een  {\end{enumerate}}
+
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\x}{\mathrm{x}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\X}{\mathrm{X}}
+
+\newcommand{\textR}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\R}{\textR{R}}
+
+\definecolor{WPICrim}{RGB}{172, 43, 55}
+\setbeamercolor{title}{fg=WPICrim}
+\setbeamercolor{palette tertiary}{bg=WPICrim}
+\setbeamercolor{palette primary}{fg=WPICrim}
+\setbeamercolor{structure}{fg=WPICrim}
+
+\title[RPCA]{\textbf{An Overview of PCA \& RPCA with Implementation } }
+\author[Applied Statistics Group\setbeamercolor{frametitle}{fg=Brown,bg=Brown!20}
+\setbeamercolor{section in head/foot}{bg=Brown}
+\setbeamercolor{author in head/foot}{bg=Brown}
+\setbeamercolor{date in head/foot}{fg=Brown}]{N.Gawron \and G.Johnson \and A.Sibu \and A.Stapelton }
+\institute[WPI]{WPI Mathematical Sciences Applied Statistics}
+\date[Summer 2021]{Summer 2021}
+\date{Monday June 14th, 2021}
+
+\begin{document}
+
+\frame{\titlepage}
+
+
+ 
+
+
+\frame{ \frametitle{Future Objectives \& Applications}
+ \vspace{-2mm}
+\bit
+\item Absolute Return Bond and Currencies (ARBC) Group uses PCA on their investment data
+\item Correlation between variables breaks down, the linearity of the PCA hinders the detection of this break in a timely manner
+\item Our group will provide research to investigate AI / ML framework using techniques on the data set provided by ARBC to detect these decorrelation events
+\item RPCA,  Autoencoders and more methods will be studied and utilized
+\item This week PCA and RPCA were examined
+
+\eit
+
+}
+
+
+\frame{ \frametitle{PCA / Principal Component Analysis}
+ \vspace{-2mm}
+A useful statistical tool which applies various linear algebra techniques.
+ \vspace{1mm}
+\newline {General  Goals:} 
+{\small 
+\ben
+\item  to eliminate redundancy by taking account of correlation among variables 
+\item to reduce the dimension of a dataset by building latent variables that contain most of the information.
+\item to create an orthogonal basis in which to view our data that explains large amounts of variability
+\ben
+\item Orthogonal basis vectors are the Principal Components (PCs ) \& are Linear Combinations (LCs) of variables
+\item PCs maximizing the variance
+\een
+\item to pre-process data  \& use PCs to prevent overfitting of models
+\een
+ 
+\vspace{-2mm}
+
+}}
+
+
+
+\frame{ \frametitle{Backbone of PCA }
+\vspace{-2mm}
+Application of Singular Value Decompostion (SVD)
+\bit
+\item Data: $\{x_1, \ldots, x_n\} \in \mathbb{R}^p$;  \# of features is $p$.\footnote{WLOG, all vectors are column vectors with \textbf{numeric} values.}
+
+\item  Data matrix: $\X_{n\times p}$ = $(x_1, \ldots, x_n)'$.
+\item  Centered data matrix: $\tilde \X$ = $(\tilde x_1, \ldots, \tilde x_n)'$ where $\tilde x_j$  = $x_j - \bar x$.
+\item SVD: $\tilde\X = U_{n\times p}D_{p\times p} V_{p\times p}'$ where 
+\bit
+\item Orthogonal by Definition:  $U'U = V'V = I_p$
+\item $D = diag(\sigma_1, \sigma_2, \ldots, \sigma_p)$, with $\sigma_1\ge\sigma_2 \ge\ldots  \ge \sigma_p\geq0$.  
+\eit
+
+\item $\tilde\X VV' = UD V' = \tilde\X$.
+\eit
+
+ 
+Use $\tilde\X V_kV_k'$ to approximate $\tilde\X$, where $V_k$ is the first $k$ columns of $V$. 
+}
+ 
+
+
+\begin{frame}[fragile]{PCA in \R \, Iris Summary Data}
+
+
+\begin{columns}[onlytextwidth,b]
+      \column{\dimexpr\linewidth-50mm-5mm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+> data(iris)
+> head(iris)
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+
+> iris_stats
+  measurement  count  mean median    sd
+1 Petal.Length   150  3.76   4.35 1.77 
+2 Petal.Width    150  1.20   1.3  0.762
+3 Sepal.Length   150  5.84   5.8  0.828
+4 Sepal.Width    150  3.06   3    0.436
+\end{Verbatim}
+}
+   
+
+      \column{50mm}
+      
+\includegraphics[scale =.36]{Iris_Variables.jpg}
+    \end{columns}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{PCA in \R \, on IRIS Data}
+\bit
+\item Pairs Plot on Iris
+\eit
+\includegraphics[scale = .35]{PairsonIris.jpeg}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{PCA in \R \, General Outputs}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+> M <- as.matrix(iris[,1:4])  # 150*4
+> pr.out <- prcomp(M, center = TRUE) # Try "scale = TRUE"
+> (pr.var = pr.out$sdev^2)
+[1] 4.22824171 0.24267075 0.07820950 0.02383509
+
+> pr.out$rotation
+                     PC1         PC2         PC3        PC4
+Sepal.Length  0.36138659 -0.65658877  0.58202985  0.3154872
+Sepal.Width  -0.08452251 -0.73016143 -0.59791083 -0.3197231
+Petal.Length  0.85667061  0.17337266 -0.07623608 -0.4798390
+Petal.Width   0.35828920  0.07548102 -0.54583143  0.7536574
+
+par(mfrow = c(1,2))
+barplot(pr.out$rotation[,1],main="PC1 loadings")
+barplot(pr.out$rotation[,2],main="PC2 loadings")
+\end{Verbatim}
+}
+
+\includegraphics[scale=.23]{pca_loadings}
+\end{frame}
+
+
+\begin{frame}[fragile]{PCA in \R \, Visualization}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+par(mfrow = c(1,1))
+plot(pr.out$x[,1:2],col=iris[,5])
+\end{Verbatim}
+}
+
+\includegraphics[scale=.25]{pca_scores}
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{How many components to keep?}
+
+\ben
+\item Kaiser's rule (of thumb): Retain PCs 1 thru $k$ satisfying 
+$$\lambda_k > \frac{1}{p} \sum_{j=1}^p \lambda_j $$ 
+Tends to choose fewer components.
+\item Find $k_0$ that minimizes 
+$$ \frac{\lambda_{k+1}}{\lambda_k}, \quad \quad k = 1, 2, \ldots, p-1. $$ 
+\een
+
+\end{frame}
+
+
+\begin{frame}[fragile]{PCA in \R \,with Scree}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+par(mfrow = c(1,2))
+plot(pr.var, xlab="Principal Component",ylab="Eigenvalue",type='b')
+pve = pr.var/sum(pr.var)
+plot(cumsum(pve), xlab="Principal Component",
+     ylab=" Cumulative Proportion of Variance Explained ", ylim=c(0,1), type='b')
+abline(h = .9, lty = 2)
+\end{Verbatim}
+}
+
+ 
+\includegraphics[scale=.25]{pca_scree}
+\end{frame}
+
+
+
+
+
+
+
+
+\frame{
+\frametitle{Goals of RPCA}
+
+{\small 
+\bit
+\item Robust to measurement anomalies or outliers
+\item Remove anomalies and provide a low rank approximation of the original data
+
+\eit
+
+\begin{equation}
+\tilde \X_{n\times p} = L_{n\times p} + S_{n\times p}
+\end{equation}
+where $L$ = low rank; $S$ = sparse (anomalies)
+\ben
+\item  Use $L$ to approximate $\tilde \X$.
+\een
+}
+
+}
+
+
+
+
+
+
+
+
+\frame{
+\frametitle{RPCA Backbone}
+
+{\small 
+\begin{equation}
+\tilde\X_{n\times p} = L_{n\times p} + S_{n\times p}
+\end{equation}
+
+
+
+
+\ben
+\item How to obtain $L$ and $S$? 
+\begin{equation}
+\min_{L,S} r(L) + \lambda \|S\|_0 \quad \text{, subject to }\tilde\X = L+S.
+\end{equation} 
+\bit
+\item $r(L)$= rank of $L$; $\nm{S}_0$ = \# of non-zero entries in $S$
+\item computationally expensive if there are many anomalies. 
+\eit
+
+\item Convex optimization: 
+\begin{equation}
+\min_{L,S} \| L\|_{*} + \lambda \|S\|_1, \quad \text{subject to } \tilde\X = L+S
+\end{equation}
+\vspace{-3mm}
+\bit
+\item $\| L\|_{*}$ = nuclear norm of $L$ (sum of SVs of $L$) 
+\item $\|S\|_1$ = $\sum_{i,j} |S_{i,j}|$
+\item $\lambda$ = $\frac{1}{\sqrt{\max(n,p)}}$ 
+\item Principal Component Pursuit / Augmented Lagrangian method
+\eit
+
+\een
+
+
+}
+
+}
+
+
+
+
+
+\begin{frame}[fragile]{\R \, code Implementation on Iris}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+library(rpca)
+Mcent <- sweep(M,2,colMeans(M)) # center data matrix
+res <- rpca(Mcent)
+> names(res)
+[1] "L"           "S"           "L.svd"       "convergence"
+> res$L.svd$d  # The low rank component has rank 2
+[1] 20.060305  1.604899
+>
+> mean(res$S==0) # sparse component is not sparse
+[1] 0.2716667
+
+## Plot the first (the only) 2 principal components of  L
+rpc <- res$L.svd$u%*%diag(res$L.svd$d)
+plot(rpc,col=iris[,5])
+\end{Verbatim}
+}
+\vspace{-1mm}
+\includegraphics[scale=.25]{rpca_scatter .png}
+%  \textbf{convergence\$converged
+% TRUE if the algorithm converged with respect to term.delta.
+% convergence\$iterations
+% Number of performed iterations.
+% convergence\$final.delta
+% The final iteration delta which is compared with term.delta.
+% convergence\$all.delta
+% All delta from all iterations.}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{\R \, code Plots}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+plot(pr.out$x[,1:2],col=iris[,5]) # PCA
+points(rpc,col=iris[,5],pch="+")  # RPCA
+\end{Verbatim}
+
+\includegraphics[scale=.35]{rpca_pca}
+
+}
+
+ 
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\R \, code for Low Rank Approximation Plots}
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+## Plot measurements against measurements corrected by sparse components
+par(mfcol=c(2,2))
+for(i in 1:4) {
+  plot(M[,i],M[,i]-res$S[,i],col=iris[,5],xlab=colnames(M)[i])}
+\end{Verbatim}
+
+\includegraphics[scale=.36]{rpca_corrected}
+
+}
+
+ 
+\end{frame}
+
+\begin{frame}[fragile]{Introduction of Wine Data}
+
+\bit
+\item Wine Quality and Metrics UCI Machine Learning Repository
+\eit
+\vspace{.25cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+colnames(wine) <- c("Cvs","Alcohol","MalicAcid","Ash","AlcalinityOfAsh", "Magnesium", 
+"TotalPhenols", "Flavanoids", "NonflavanoidPhenols", "Proanthocyanins", "ColorIntensity", "Hue", 
+"ODRatio", "Proline")
+# The first column corresponds to the classes
+wineClasses <- factor(wine$Cvs)
+
+
+\end{Verbatim}
+}
+\vspace{-.5cm}
+\hspace{-.5cm}
+\includegraphics[scale = .30]{wine_boxplots.png}
+
+ 
+\end{frame}
+
+\begin{frame}[fragile]{Summary Statistics of Wine Data}
+
+\begin{Verbatim}[formatcom=\color{blue}]
+                    count        mean  median          sd
+Alcohol               178  13.0006180  13.050   0.8118265
+MalicAcid             178   2.3363483   1.865   1.1171461
+Ash                   178   2.3665169   2.360   0.2743440
+AlcalinityOfAsh       178  19.4949438  19.500   3.3395638
+Magnesium             178  99.7415730  98.000  14.2824835
+TotalPhenols          178   2.2951124   2.355   0.6258510
+Flavanoids            178   2.0292697   2.135   0.9988587
+NonflavanoidPhenols   178   0.3618539   0.340   0.1244533
+Proanthocyanins       178   1.5908989   1.555   0.5723589
+ColorIntensity        178   5.0580899   4.690   2.3182859
+Hue                   178   0.9574494   0.965   0.2285716
+ODRatio               178   2.6116854   2.780   0.7099904
+Proline               178 746.8932584 673.500 314.9074743
+    
+\end{Verbatim}
+    
+\end{frame}
+
+\begin{frame}[fragile]{Correlation of Wine Data \R}
+
+\hspace{-.5cm}
+\includegraphics[scale = .34]{wine_scatterplot.png}
+
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\R \, code for Outlier Control (Wine)}
+
+\bit
+\item General PCA on Wine Data
+\eit
+\vspace{.25cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+
+winePCA <- prcomp(scale(wine[,-1]))
+#plots all 178 observations, but using just the 1st & 2nd PCs. Color coded by cultivator
+plot(winePCA$x[,1:2], col = wineClasses)
+\end{Verbatim}
+
+
+\includegraphics[scale = .40]{wine_pca.png}
+}
+
+
+
+ 
+\end{frame}
+
+
+
+\begin{frame}[fragile]{\R \, code for PC Selection Methods}
+
+\bit
+\item PCA diagnostics / Kaiser’s 
+\eit
+\vspace{.25 cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+    summary(winePCA) #8 PCs required to explain at least 90% of variance
+Importance of components:
+                         PC1    PC2    PC3     PC4     PC5     PC6     PC7
+Standard deviation     2.169 1.5802 1.2025 0.95863 0.92370 0.80103 0.74231
+Proportion of Variance 0.362 0.1921 0.1112 0.07069 0.06563 0.04936 0.04239
+Cumulative Proportion  0.362 0.5541 0.6653 0.73599 0.80162 0.85098 0.89337
+                           PC8     PC9   PC10    PC11    PC12    PC13
+Standard deviation     0.59034 0.53748 0.5009 0.47517 0.41082 0.32152
+Proportion of Variance 0.02681 0.02222 0.0193 0.01737 0.01298 0.00795
+Cumulative Proportion  0.92018 0.94240 0.9617 0.97907 0.99205 1.00000
+
+
+> winePCA$sdev
+ [1] 2.1692972 1.5801816 1.2025273 0.9586313 0.9237035 0.8010350 0.7423128
+ [8] 0.5903367 0.5374755 0.5009017 0.4751722 0.4108165 0.3215244
+> winePCA$sdev^2
+ [1] 4.7058503 2.4969737 1.4460720 0.9189739 0.8532282 0.6416570 0.5510283
+ [8] 0.3484974 0.2888799 0.2509025 0.2257886 0.1687702 0.1033779
+> mean(winePCA$sdev^2)
+[1] 1
+
+eigenvalue ratio minimization
+> for(i in 1:12) { wine_ratio[i] = wine_eigen[i+1] / wine_eigen[i] }
+> cbind(which(wine_ratio==min(wine_ratio)),min(wine_ratio))
+     [,1]           [,2]
+[1,]    1 0.    5306105
+\end{Verbatim}
+}
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Wine Data \R \, code Plot Interpretations}
+
+\bit
+\item PCA diagnostics
+\eit
+\vspace{.25 cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+PercVar <- winePCA$sdev^2 / sum(winePCA$sdev^2)
+> par(mfcol=c(1,2))
+> periodT<-rep("o",178)
+> biplot(winePCA,xlabs= periodT)
+> plot(cumsum(PercVar), xlab="Principal Component",
+ylab=" Cumulative Proportion of Variance ", ylim=c(0,1))
+> abline(h=.8,lty=2)
+\end{Verbatim}
+
+\vspace{-1mm}
+\includegraphics[scale=.31]{NewBiPlotandScree.jpeg}
+     
+}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Wine Data \R \, code Plot Interpretations}
+
+\bit
+\item Biplots on Other PCs
+\eit
+\vspace{.25 cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+PercVar <- winePCA$sdev^2 / sum(winePCA$sdev^2)
+> par(mfcol=c(1,2))
+> biplot(winePCA, choices = 2:3, xlabs= periodT)
+> biplot(winePCA, choices = c(1,3), xlabs= periodT)
+\end{Verbatim}
+
+\vspace{-.2mm}
+\includegraphics[scale=.45]{pc3.png}
+     
+}
+\end{frame}
+
+
+\begin{frame}[fragile]{\R \, code for Outlier Control}
+
+\bit
+\item PCA is non-resistant to outliers
+\eit
+\vspace{.25 cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+#Make an outlier 
+wineOutlier <- wine
+wineOutlier[10,] <- wineOutlier[10,]*10 
+# change the 10th obs. into an extreme one by multiplying its profile by 10
+outlierPCA <- prcomp(scale(wineOutlier[,-1]))
+plot(outlierPCA$x[,1:2], col = wineClasses)
+#outlier sample is very obvious from this graph 
+\end{Verbatim}
+
+\includegraphics[scale=.40]{wine_outlier_pca.png}
+
+}
+\end{frame}
+
+\begin{frame}[fragile]{\R \, code for RPCA Outlier Control}
+
+\bit
+\item RPCA is resistant to outliers and scales
+\eit
+\vspace{.25 cm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+
+#using rpca on wine data 
+wineRobust = rpca(scale(wineOutlier[-1]))
+wineRobust$L.svd$d #the low rank component has rank 8 
+wineRobustPCs = wineRobust$L.svd$u%*%diag(wineRobust$L.svd$d)
+mean(wineRobust$S==0) #19.7% of the sparse matrix are zeros 
+plot(wineRobustPCs, col = wineClasses)
+\end{Verbatim}
+
+\includegraphics[scale=.40]{wine_robust_pca.png}
+
+}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Viability of RPCA in \R \, on Wine Data }
+\vspace{-2mm}
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+M<-as.matrix(wine[,-1])
+res <- rpca(sweep(M,2,colMeans(M)))
+res$L.svd$d #the low rank component has rank 8
+resPCs <- res$L.svd$u%*%diag(res$L.svd$d)
+
+par(mfcol=c(4,4))
+for(i in 1:13) {
+  plot(M[,i],M[,i]-res$S[,i],col=iris[,5],xlab=colnames(M)[i])
+\end{Verbatim}
+}
+
+\end{frame}
+
+
+\begin{frame}{Plotting Values}
+    \includegraphics[scale =.45]{ResPlotApprox.jpeg}
+\end{frame}
+
+
+
+\frame{
+\frametitle{Sparse PCA}
+A  disadvantage of general PCA is that the PCs are usually linear combinations of \underline{all} input variables. 
+{ \small
+\bit
+\item Sparse PCA finds certain columns from data matrix $M$ to use select input variables
+\item Loss of Orthogonality in PCs
+\eit
+
+}
+
+
+}
+
+
+
+
+
+\frame{
+\frametitle{Sparse PCA Backbone}
+SPCA assumes we can reconstruct a matrix $X$ of rank $k$ using any $k$ columns of $X$ 
+{ \small
+\bit
+\item center the data matrix to create $\tilde X$
+\item create a selection matrix $\Phi_k\in \{0,1\}^{n\times k}$ such that $\tilde X_k = \tilde X\Phi_k$
+\item perform PCA on $\tilde X_k$ to achieve $U\Sigma V^T = SVD(\tilde X_k)$
+\item compute $Z = \tilde X_k(\Phi_k^T-\Phi_k^TVV^T)((I-\Phi_k\Phi_k^T)VV^T-(I-\Phi_k\Phi_k^T))^{-1}$
+\eit
+\ben
+\item use $L = X_k\Phi_k\Phi_k^T+Z(I-\Phi_k\Phi_k^T)$ to approximate $X$
+\een
+
+}
+
+}
+
+
+
+
+
+\begin{frame}[fragile]{Sparse PCA in \R \, }
+
+{\tiny
+\begin{Verbatim}[formatcom=\color{blue}]
+> library('sparsepca')
+> spca_wine = spca(wine,k=7,scale = TRUE)
+> wineClasses <- factor(wine$Cvs)
+> plot(spca_wine$scores[,1:2], col = > wineClasses,xlab = 'PC1',ylab = 'PC2')
+\end{Verbatim}
+}
+
+\includegraphics[scale=.30]{spca1.png}
+
+\end{frame}
+
+
+
+
+\begin{frame}[fragile]{Thanks!}
+
+\begin{center}
+  Questions?
+\end{center}
+
+\end{frame}
+
+
+
+
+
+\end{document}
+
+
+
+
+
+

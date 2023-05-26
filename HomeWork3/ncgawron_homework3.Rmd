@@ -1,0 +1,129 @@
+---
+title: "ncgawron_homework3"
+author: "Nicholas Gawron w/ Jamie Loring"
+date: "2/21/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```   
+
+## Homework 3 
+
+
+### Logical Operators 
+1. Draw a vector of 50 random uniform(0,1) values (see runif()) and call it unif50. Output a vector of
+TRUE/FALSE values that indicate if the values of unif50 are greater than 0.5. (Note: this will change
+each time you knit your document or run it in the console/notebook)
+
+```{r}
+unif50 <- runif(50, min= 0, max = 1) # creates uniform random digits from 0 to 1
+  unif50 >.5 # logical indexing for TRUE values in vector  
+```
+
+2. Use the sum function to output the number of values in unif50 that are greater than 0.5. Use the mean
+function to output the proportion of values in unif50 are greater than 0.5. Explain what is happening
+to the logical TRUE/FALSE values that allows this to work?
+
+```{r warning = FALSE ,collapse = TRUE }
+n<-sum(unif50 >.5);n # outputs the number of occurrences in which unif50 > .5 
+mean((unif50 >.5)) # outputs the proportion of occurrences
+```
+$$\mu = \frac{\sum_{i=1}^{n}x_i}{n}$$
+The logical true false are converted to 1's and 0's and then used as a counter for true occurrences. One corresponds to a TRUE value in the vector and zero corresponds to a FALSE value in the vector. This comes from the help(sum) documentation. 
+
+3.  The ! operator can also negate a logical statement - e.g. !TRUE returns FALSE. It is helpful to use it
+with parentheses to think about the order of operations, e.g. !(3>2). Print to the console the proportion
+of values in unif50 that are either smaller than 0.25 or larger than 0.75. Do this by negating a
+check if the values are both less than 0.75 and larger than 0.25.
+
+```{r warning = FALSE ,collapse = TRUE }
+vec <- unif50[!((unif50 >=.25) & (unif50 <= .75))]; vec # outputs the  occurrences where unif50 >.75 or  unif50<.25, this is comes from DeMorgans.
+mean(vec) # the proportion of above occurrences
+```
+
+### Titanic Data
+
+1. Read in the data set using a function from the tidyverse: 
+
+```{r warning = FALSE,  echo = T, results = 'hide'}
+TitanicR = readr::read_csv("data/titanic.csv") #reads in data from tidyverse package
+```
+
+2. Print to the console a tibble with the names and ages for females in the second class (Pclass = 2) who
+are younger than 10 years old.
+```{r warning = FALSE }
+#filters ages 
+TitanicR %>% filter(pclass == 2,age <10,sex == "female") %>% select(name,age)
+```
+The above piping considers the raw data read in from step 1. Then filters the rows to keep values in which pclass is 2, age is less than 10 and the sex is listed as female. Piping is done one more time to only display the coloums of name and age. 
+
+3. Print to the console a tibble with the names, ages, pclasses, and fare for passengers whose fares are
+more than the average fare. You’ll need to filter out any rows that have an NA for fare prior to finding
+the mean used in the comparison
+
+
+```{r warning = FALSE,  echo = T}
+TitanicNoNA =TitanicR %>% filter(!(fare == "NA"))
+meanFare = mean(TitanicNoNA$fare)
+ModyTitanic = TitanicNoNA %>% filter(fare > meanFare) %>% select(name,age,pclass,fare); ModyTitanic
+```
+ The first line in the above chuck filters for values in which the fare is not equal to "NA". The second line computes the mean value of the fare where NA is excluded. Logical indexing is then used to filter for rows where the values of the fare are above the mean.  
+ 
+ 
+4. Print out the same information as the previous question asked for, but print reorder the rows descending
+on Age.
+
+```{r}
+ModyTitanic %>% arrange(desc(age)) # descending order
+```
+
+
+## Air Quality
+
+1. Read in the airquality.txt dataset using a function from the tidyverse.
+
+```{r}
+AirQual = read_table2('data/airquality.txt'); #Reads in data with tidyverse, white space delim.
+```
+  
+2. Remove NA Ozone.
+```{r}
+allOzone =  AirQual %>% filter(!(Ozone == "NA")); allOzone
+```
+The filters for rows in which the Ozone col. has values that are not "NA". 
+
+
+3. Use the select function to drop the Day column from the allOzone object. Save the resulting dataset
+in an object called allOzoneNoDay.
+```{r}
+allOzoneNoDay = allOzone %>% select(-(Day)); allOzoneNoDay
+```
+Eliminates the Day column thru select.
+
+4. With the select function, rearrange the columns of allOzoneNoDay so that Month and Temp come
+before the others. Save the resulting dataset in an object called allOzoneNoDayReorder.
+
+```{r}
+allOzoneNoDayReorder = allOzoneNoDay %>% select(Month, Temp,everything());allOzoneNoDayReorder
+```
+
+5. Use the rename function to change the Solar.R variable to Solar_Radiation in your allOzoneNoDayReorder.
+Just print this one to the console.
+
+```{r}
+allOzoneNoDayReorder %>% rename("Solar_Radiation" = Solar.R)
+```
+Uses the rename function to change the name of a specific colounm in the allOzoneNoDayReorder tibble. 
+
+
+6. Wow - naming intermediate objects stinks. Write a single line of code that uses chaining to accomplish
+steps 2-5. Save the resulting dataset in an object called myAir. Print this to the console.
+
+```{r}
+myAir = AirQual %>% filter(!(Ozone == "NA")) %>% select(-(Day)) %>% select(Month, Temp,everything()) %>% rename("Solar_Radiation" = Solar.R);myAir
+# Repeted filtering with piping operator on the original read in data set
+```
+
