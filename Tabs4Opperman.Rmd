@@ -1,0 +1,53 @@
+---
+title: "Title 1 "
+output:
+  html_document:
+    code_folding: hide
+---
+
+
+
+# Title 2{.tabset}
+
+
+## Sample Tab 1 
+
+
+Can SAS be this pretty with these outputs?
+
+- Nah 
+
+
+
+
+### Example of Code (on Tab 1)
+
+```{r}
+summary(iris)
+```
+
+
+### Example of text
+
+Here is one sentence. 
+
+
+
+**Also click the tabs to see more text and such!**
+
+
+## Sample Tab 2 
+
+
+### This is why R is better 
+
+I said what i said! 
+
+
+
+## Closing 
+
+
+SAS could never do this $\ldots$
+
+$$\int \text{R's ability to be awesome } = \infty$$
